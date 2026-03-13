@@ -1,54 +1,47 @@
 /**
- * api.js
- *
- * PRIMARY: iTunes Search API — fetched directly from browser (native CORS, no proxy)
- *   - Artist search, track list, album list, 30-sec MP3 previews
- *
- * BONUS: TheAudioDB — artist bio & hi-res artwork via local proxy
- *   Falls back gracefully if proxy is unavailable
+ * api.js — all data via iTunes Search API
+ * iTunes has native CORS headers → works directly from the browser, no proxy needed.
+ * Every track comes with a real 30-second MP3 previewUrl.
  */
 
-// ── iTunes (direct, no proxy needed) ─────────────────────────────────────────
+const ITUNES = 'https://itunes.apple.com'
 
-export async function itunesSearchTracks(artist, limit = 50) {
-  const url = `https://itunes.apple.com/search?${new URLSearchParams({
-    term: artist, entity: 'song', limit, sort: 'popular',
-  })}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`iTunes ${res.status}`);
-  return res.json(); // .results[] each has: trackName, artistName, collectionName, previewUrl, artworkUrl100, trackTimeMillis
+async function get(params) {
+  const url = `${ITUNES}/search?${new URLSearchParams(params)}`
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`iTunes ${res.status}`)
+  return res.json()
 }
 
-export async function itunesSearchAlbums(artist, limit = 20) {
-  const url = `https://itunes.apple.com/search?${new URLSearchParams({
-    term: artist, entity: 'album', limit,
-  })}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`iTunes albums ${res.status}`);
-  return res.json();
+export async function searchTracks(artist, limit = 50) {
+  return get({ term: artist, entity: 'song', limit, sort: 'popular' })
 }
 
-export async function itunesLookupArtist(artist) {
-  const url = `https://itunes.apple.com/search?${new URLSearchParams({
-    term: artist, entity: 'musicArtist', limit: 1,
-  })}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`iTunes artist ${res.status}`);
-  return res.json();
+export async function searchAlbums(artist, limit = 24) {
+  return get({ term: artist, entity: 'album', limit })
 }
 
-// ── TheAudioDB via local proxy (bonus — artist bio/artwork) ──────────────────
-
-async function adbFetch(endpoint, params = {}) {
-  try {
-    const qs = new URLSearchParams(params).toString();
-    const url = `/api/audiodb/${endpoint}${qs ? '?' + qs : ''}`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(4000) });
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null; // proxy down — no problem, iTunes handles everything
+export function normaliseTrack(r) {
+  return {
+    id:        r.trackId,
+    name:      r.trackName      || 'Unknown',
+    artist:    r.artistName     || '',
+    album:     r.collectionName || '',
+    thumb:     (r.artworkUrl100 || '').replace('100x100bb', '300x300bb'),
+    duration:  r.trackTimeMillis || 0,
+    preview:   r.previewUrl     || null,
+    trackNum:  r.trackNumber,
+    genre:     r.primaryGenreName || '',
   }
 }
 
-export const adbArtistInfo = (s) => adbFetch('search.php', { s });
+export function normaliseAlbum(r) {
+  return {
+    id:        r.collectionId,
+    name:      r.collectionName || 'Unknown',
+    artist:    r.artistName     || '',
+    thumb:     (r.artworkUrl100 || '').replace('100x100bb', '300x300bb'),
+    year:      r.releaseDate?.slice(0, 4) || '',
+    tracks:    r.trackCount || 0,
+  }
+}

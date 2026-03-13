@@ -1,26 +1,19 @@
 {
-  "name": "music-app",
+  "name": "groovebox",
   "version": "1.0.0",
   "private": true,
-  "proxy": "http://localhost:3001",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "express": "^4.18.2",
-    "node-fetch": "^2.7.0",
-    "concurrently": "^8.2.2"
-  },
-  "scripts": {
-    "start": "concurrently \"node proxy.js\" \"react-scripts start\"",
-    "start:proxy": "node proxy.js",
-    "start:react": "react-scripts start",
-    "build": "react-scripts build"
-  },
-  "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
-    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.1.4"
   }
 }

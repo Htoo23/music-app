@@ -1,21 +1,21 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --pink: #f72585;
-  --purple: #7209b7;
-  --blue: #4361ee;
-  --cyan: #4cc9f0;
-  --bg: #0d0d14;
+  --pink:    #f72585;
+  --purple:  #7209b7;
+  --blue:    #4361ee;
+  --cyan:    #4cc9f0;
+  --bg:      #0d0d14;
   --surface: #13131f;
-  --surface2: #1c1c2e;
-  --border: rgba(255,255,255,0.07);
-  --text: #f0f0ff;
-  --muted: #7b7b9a;
+  --surface2:#1c1c2e;
+  --border:  rgba(255,255,255,0.07);
+  --text:    #f0f0ff;
+  --muted:   #7b7b9a;
   --font-display: 'Syne', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
 }
 
-html, body { height: 100%; }
+html, body, #root { height: 100%; }
 
 body {
   background: var(--bg);
@@ -25,16 +25,10 @@ body {
   overflow: hidden;
 }
 
-#root { height: 100%; }
-
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-@keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-@keyframes barAnim {
-  0%,100% { height: 4px; }
-  50% { height: 18px; }
-}
+@keyframes spin    { to { transform: rotate(360deg); } }
+@keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes barAnim { 0%,100% { height: 3px; } 50% { height: 16px; } }
